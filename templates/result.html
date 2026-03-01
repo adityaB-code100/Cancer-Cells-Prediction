@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result - Cancer Risk</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .result-card {
+            text-align: center;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .cancer-result {
+            background-color: #ffebee;
+            border: 2px solid #f44336;
+            color: #c62828;
+        }
+        .no-cancer-result {
+            background-color: #e8f5e9;
+            border: 2px solid #4caf50;
+            color: #2e7d32;
+        }
+        .result-text {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .probability {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .info-section {
+            margin: 25px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .input-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .summary-item {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #3498db;
+        }
+        .summary-label {
+            font-weight: bold;
+            color: #34495e;
+            font-size: 14px;
+        }
+        .summary-value {
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        .back-btn {
+            display: block;
+            background-color: #3498db;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            width: 200px;
+            margin: 20px auto;
+        }
+        .back-btn:hover {
+            background-color: #2980b9;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cancer Risk Prediction Result</h1>
+        
+        <div class="result-card {% if prediction == 'Cancer' %}cancer-result{% else %}no-cancer-result{% endif %}">
+            <div class="result-text">{{ prediction }}</div>
+            <div class="probability">Probability of having cancer: {{ probability }}%</div>
+        </div>
+        
+        <div class="warning">
+            <strong>Disclaimer:</strong> This prediction is based on machine learning analysis of health and exposure data. 
+            It is not a medical diagnosis. Please consult with a healthcare professional for medical advice.
+        </div>
+        
+        <div class="info-section">
+            <h3>Input Summary</h3>
+            <div class="input-summary">
+                <div class="summary-item">
+                    <div class="summary-label">Gender</div>
+                    <div class="summary-value">{{ input_data.Gender }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Age Group</div>
+                    <div class="summary-value">{{ input_data.Age_Group }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">BMI Value</div>
+                    <div class="summary-value">{{ input_data.BMI_Value }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">BMI Category</div>
+                    <div class="summary-value">{{ input_data.BMI_Category }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Smoking Status</div>
+                    <div class="summary-value">{{ input_data.Smoking_Status }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Smoking Intensity</div>
+                    <div class="summary-value">{{ input_data.Smoking_Intensity }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Years Smoked</div>
+                    <div class="summary-value">{{ input_data.Years_Smoked }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Cigarettes Per Day</div>
+                    <div class="summary-value">{{ input_data.Cigarettes_Per_Day }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">PM2.5 Level</div>
+                    <div class="summary-value">{{ "%.1f"|format(input_data.PM25_Level|float) }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Radon Exposure</div>
+                    <div class="summary-value">{{ input_data.Radon_Exposure }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Asbestos Exposure</div>
+                    <div class="summary-value">{{ input_data.Asbestos_Exposure }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Oxygen Percentage</div>
+                    <div class="summary-value">{{ "%.1f"|format(input_data.Oxygen_Percentage|float) }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Has Cough</div>
+                    <div class="summary-value">{{ "Yes" if input_data.Has_Cough == 1 else "No" }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Has Breathlessness</div>
+                    <div class="summary-value">{{ "Yes" if input_data.Has_Breathlessness == 1 else "No" }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <a href="/" class="back-btn">Make Another Prediction</a>
+    </div>
+</body>
+</html>
